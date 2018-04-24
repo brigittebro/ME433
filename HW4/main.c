@@ -1,5 +1,6 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
+#include<spi.h>
 #define  WAIT_TIME 12000
 
 // DEVCFG0
