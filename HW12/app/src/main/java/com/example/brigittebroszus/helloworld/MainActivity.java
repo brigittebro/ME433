@@ -1,5 +1,6 @@
 package com.example.brigittebroszus.helloworld;
 
+import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.SeekBar;
@@ -27,10 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
             int progressChanged = 0;
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressChanged = progress;
-                myTextView.setText("The value is: "+progress);
+                myTextView.setText("The value is " +progress);
             }
 
             @Override
