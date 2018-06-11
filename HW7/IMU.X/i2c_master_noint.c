@@ -93,3 +93,17 @@ i2c_master_ack(1); // make the ack so the slave knows we got it
 
 i2c_master_stop(); // make the stop bit
 }
+
+/* I2CmultipleRead() function to be able 
+ * to read many registers in a row. 
+ * Read all of the temperature, gyroscope, and 
+ * accelerometer data registers, 
+ * and shift them into signed shorts 
+ * (temperature, gyroX, gyroY, gyroZ, accelX, accelY, accelZ).
+*/
+
+void I2CmultipleRead(short val[7],unsigned char addr){
+    for (int i =0;i++;i<7){
+       val[i] = i2cread(addr+i); 
+    }
+}

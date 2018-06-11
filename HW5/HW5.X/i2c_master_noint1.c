@@ -1,14 +1,11 @@
-#include<xc.h>
-#include "i2c_master_noint.h"
-
 // I2C Master utilities, 100 kHz, using polling rather than interrupts
 // The functions must be callled in the correct order as per the I2C protocol
 // Change I2C1 to the I2C channel you are using
 // I2C pins need pull-up resistors, 2k-10k
 
 void i2c_master_setup(void) {
-  I2C2BRG = 390;           // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2
-                           // look up PGD for your PIC32
+  I2C2BRG = 100;            // I2CBRG = [1/(2*Fsck) - PGD]*Pblck - 2 
+                                    // look up PGD for your PIC32
   I2C2CONbits.ON = 1;               // turn on the I2C1 module
 }
 
@@ -18,8 +15,8 @@ void i2c_master_start(void) {
     while(I2C2CONbits.SEN) { ; }    // wait for the start bit to be sent
 }
 
-void i2c_master_restart(void) {
-    I2C2CONbits.RSEN = 1;           // send a restart
+void i2c_master_restart(void) {     
+    I2C2CONbits.RSEN = 1;           // send a restart 
     while(I2C2CONbits.RSEN) { ; }   // wait for the restart to clear
 }
 
@@ -47,49 +44,4 @@ void i2c_master_ack(int val) {        // sends ACK = 0 (slave should send anothe
 void i2c_master_stop(void) {          // send a STOP:
   I2C2CONbits.PEN = 1;                // comm is complete and master relinquishes bus
   while(I2C2CONbits.PEN) { ; }        // wait for STOP to complete
-}
-
-void initExp(){
-//B2 & B3 digital pins
-i2c_master_setup();
-
-i2cwrite(0x000,0b1110000); //iodir
-i2cwrite(0x0A,0b0001111);
-}
-
-
-void i2cwrite(unsigned char addr,unsigned char reg, unsigned char val){
-// use wiki code :)
-
-i2c_master_start(); // make the start bit
-
-i2c_master_send(addr<1|0); // write the address, shifted left by 1, or'ed with a 0 to indicate writing
-
-i2c_master_send(reg); // the register to write to
-
-i2c_master_send(val); // the value to put in the register
-
-i2c_master_stop(); // make the stop bit
-}
-
-
-unsigned char i2cread(unsigned char addr){
-// code from wiki :)
-  //  To read the value from register 7 in a chip with address 12, the code would look like:
-
-i2c_master_start(); // make the start bit
-
-i2c_master_send(addr<1|0); // write the address, shifted left by 1, or'ed with a 0 to indicate writing
-
-i2c_master_send(0x09); // the register to read from
-
-i2c_master_restart(); // make the restart bit
-
-i2c_master_send(addr<1|1); // write the address, shifted left by 1, or'ed with a 1 to indicate reading
-
-char r = i2c_master_recv(); // save the value returned
-
-i2c_master_ack(1); // make the ack so the slave knows we got it
-
-i2c_master_stop(); // make the stop bit
 }

@@ -1,6 +1,7 @@
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
 #include<spi.h>
+
 #define  WAIT_TIME 12000
 
 // DEVCFG0
@@ -55,17 +56,31 @@ int main() {
     // disable JTAG to get pins back
     DDPCONbits.JTAGEN = 0;
 
+    
     // do your TRIS and LAT commands here
 
+    
+    LATA = 0x003E;          // sets RA1 through RA5 HIGH, all else on PortA LOW
+LATBbits.LATB5 = 1;     // set pin RB5 HIGH
+    
+   /*
+    TRISB.RB0 = 0; //set Port RB0 as output
+    PORTB.RB0 = 1; //set Port RB0 to high (turn on LED)
+    TRISA = 1; //Set PORTA as inputs 
+    */
+    
+    TRISBbits.TRISB4 = 1; // pushbutton pin input
+    TRISAbits.TRISA4 = 0; // set LED pin to output
+    PORTAbits.RA4 =1; // LED pin output (initially high)
+        
     __builtin_enable_interrupts();
 
     while(1) {
         _CP0_SET_COUNT(0);
-        LATAINV = 0b10000;
-        for(;_CP0_GET_COUNT()<(WAIT_TIME+1);)
-        {
-            while(!PORTBbits.RB4){;}
-        }
+        while(_CP0_GET_COUNT()<WAIT_TIME){;}
+            LATAINV = 0b10000; // invert output
+        while(!PORTBbits.RB4){;} 
+        // do nothing while pushbutton is pressed
         //Core Timer to toggle your LED at 1000Hz
 	// use _CP0_SET_COUNT(0) and _CP0_GET_COUNT() to test the PIC timing
 	// remember the core timer runs at half the sysclk

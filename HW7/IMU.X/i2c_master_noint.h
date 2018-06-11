@@ -15,5 +15,6 @@ void i2c_master_stop(void);               // send a stop
 void initExp();
 void i2cwrite(unsigned char addr,unsigned char reg, unsigned char val);
 unsigned char i2cread(unsigned char addr);
+void I2CmultipleRead(short val[7],unsigned char addr);
 
 #endif

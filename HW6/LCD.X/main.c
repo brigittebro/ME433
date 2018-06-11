@@ -7,6 +7,7 @@
 
 #include<xc.h>           // processor SFR definitions
 #include<sys/attribs.h>  // __ISR macro
+#include<ST7735.h>
 #define  WAIT_TIME 12000
 
 // DEVCFG0
@@ -66,8 +67,8 @@ int main() {
     __builtin_enable_interrupts();
     
     LCD_init();
-    LCD_progressBar(,);
-    LCD_asciiWrite(x);
+    LCD_clearScreen(BLACK);
+    LCD_progressBar(5,20);
 
 
     
