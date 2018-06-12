@@ -49,6 +49,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "app.h"
 #include <stdio.h>
 #include <xc.h>
+#include "ST7735.h"
 
 // *****************************************************************************
 // *****************************************************************************
@@ -394,6 +395,9 @@ void APP_Tasks(void) {
                         /* YOU COULD PUT AN IF STATEMENT HERE TO DETERMINE WHICH LETTER
                         WAS RECEIVED (USUALLY IT IS THE NULL CHARACTER BECAUSE NOTHING WAS
                       TYPED) */
+                if (appData.readBuffer[0] =="r"){
+                 break;   
+                }
 
                 if (appData.readTransferHandle == USB_DEVICE_CDC_TRANSFER_HANDLE_INVALID) {
                     appData.state = APP_STATE_ERROR;
@@ -439,18 +443,34 @@ void APP_Tasks(void) {
             /* THIS IS WHERE YOU CAN READ YOUR IMU, PRINT TO THE LCD, ETC */
             len = sprintf(dataOut, "%d\r\n", i);
             i++; // increment the index so we see a change in the text
+            
+            // IMU STUFF
+            I2CmultipleRead(accel_vals,ADDR);
+            dataOut = "index %d %d %d %d %d %d", accel_vals[0],accel_vals[1],accel_vals[2],accel_vals[3],accel_vals[4],accel_vals[5];
+            
+            
             /* IF A LETTER WAS RECEIVED, ECHO IT BACK SO THE USER CAN SEE IT */
             if (appData.isReadComplete) {
-                USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
+                /*USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle,
                         appData.readBuffer, 1,
                         USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
-            }
+            } */
+                ;} // don't want to print anything
             /* ELSE SEND THE MESSAGE YOU WANTED TO SEND */
             else {
                 USB_DEVICE_CDC_Write(USB_DEVICE_CDC_INDEX_0,
                         &appData.writeTransferHandle, dataOut, len,
                         USB_DEVICE_CDC_TRANSFER_FLAGS_DATA_COMPLETE);
+                
+               
+            
+                
+                // 100 values of accel and gyro XYZ data output at 100Hz
+           
+                
+            
+                
                 startTime = _CP0_GET_COUNT(); // reset the timer for acurate delays
             }
             break;
